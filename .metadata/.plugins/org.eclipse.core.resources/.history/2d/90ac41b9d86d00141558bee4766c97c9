@@ -1,0 +1,79 @@
+package com.application.ecco;
+
+import org.apache.http.Header;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class CreateUserActivity extends ActionBarActivity {
+	EditText username, password, email, phone;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_create_user);
+		username = (EditText)findViewById(R.id.username);
+		password = (EditText)findViewById(R.id.password);
+		email = (EditText)findViewById(R.id.email);
+		phone = (EditText)findViewById(R.id.phone);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.create_user, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	public void postAndCreateUser(View view) {
+		AsyncHttpClient client = new AsyncHttpClient();
+    	RequestParams params = new RequestParams();
+    	Toast.makeText(getApplicationContext(), username.getText().toString(), Toast.LENGTH_SHORT);
+    	//params.put("username", username.getText().toString());
+    	//params.put("password", password.getText().toString());
+    	//params.put("email", email.getText().toString());
+    	//params.put("phone", phone.getText().toString());
+    	/*client.post("http://ecco.herokuapp.com/api/createUser", new AsyncHttpResponseHandler() {
+			@Override
+			public void onFailure(int statuscode, Header[] headers, byte[] response,
+					Throwable arg3) {
+				String s = new String(response);
+				Context c = getApplicationContext();
+				int duration = Toast.LENGTH_SHORT;
+				Toast.makeText(c, s, duration).show();
+			}
+
+			@Override
+			public void onSuccess(int statuscode, Header[] headers, byte[] response) {
+				String s = new String(response);
+				Context c = getApplicationContext();
+				int duration = Toast.LENGTH_SHORT;
+				Toast.makeText(c, s, duration).show();		
+			}
+    		
+    	});
+    	//Intent intent = new Intent(this, HomeActivity.class);
+    	//startActivity(intent);*/
+	}
+}
