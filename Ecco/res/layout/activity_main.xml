@@ -35,7 +35,7 @@
         android:layout_alignBaseline="@+id/editText2"
         android:layout_alignBottom="@+id/editText2"
         android:layout_alignLeft="@+id/textView1"
-        android:text="Password:"
+        android:text="@string/pass"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
@@ -58,7 +58,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="32dp"
         android:layout_toLeftOf="@+id/editText1"
-        android:text="Username:"
+        android:text="@string/user"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
