@@ -37,7 +37,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	PagerAdapter adapter;
 	ViewPager pager;
 	
-	String[] title = { "User Profile", "Request List" };
+	String[] title = { "Send Friend Request", "Pending Requests", "Friends", "Location Services" };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
