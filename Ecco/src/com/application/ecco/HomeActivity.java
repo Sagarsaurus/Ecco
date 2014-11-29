@@ -17,6 +17,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,11 +34,13 @@ import android.widget.Toast;
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 	final static String EXTRA_MESSAGE = "com.application.ecco.MESSAGE";
 	JSONObject json;
+	ActionBar bar = null;
+	private static Context c = null;
 	
 	PagerAdapter adapter;
 	ViewPager pager;
 	
-	String[] title = { "Send Friend Request", "Pending Requests", "Friends", "Location Services" };
+	String[] title = { "Send Friend Request", "Pending Requests", "Friends", "News Feed", "Share Location" };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 		setContentView(R.layout.activity_home);
 		adapter = new PagerAdapter(getSupportFragmentManager());
 		
-		final ActionBar bar = getActionBar();
+		bar = getActionBar();
 		
 		bar.setHomeButtonEnabled(false);
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -63,6 +66,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			bar.addTab(bar.newTab().setText(name)
 					.setTabListener((TabListener) this));
 		}
+		
+		HomeActivity.c = getApplicationContext();
 	}
 
 	@Override
@@ -97,13 +102,19 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				return new ProfileFragment();
 			case 1:
 				return new RequestListFragment();
+			case 2:
+				return new FriendFragment();
+			case 3: 
+				return new NewsFeedFragment();
+			case 4: 
+				return new ShareLocationFragment();
 			}
 			return null;
 		}
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 5;
 		}
 		
 	}
@@ -113,14 +124,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View root = inflater.inflate
+			final View root = inflater.inflate
 					(R.layout.user_profile, container, false);
 			root.findViewById(R.id.button1)
 				.setOnClickListener(new View.OnClickListener() {
 					@Override
-					public void onClick(View v) {
+					public void onClick(View root) {
 						// methods need to be static
-						// sendRequest(v);
+						 sendRequest(root);
 					}
 				});
 			return root;
@@ -135,16 +146,50 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			View root = inflater.inflate
 					(R.layout.request_list, container, false);
 			return root;
+			
 		}
 	}
 	
-	public void sendRequest(View view) {
-		Intent intent = getIntent();
-		String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+	public static class FriendFragment extends Fragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View root = inflater.inflate
+					(R.layout.friend_list, container, false);
+			return root;
+			
+		}
+	}
+	
+	public static class NewsFeedFragment extends Fragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View root = inflater.inflate
+					(R.layout.request_list, container, false);
+			return root;
+			
+		}
+	}
+	
+	
+	public static class ShareLocationFragment extends Fragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View root = inflater.inflate
+					(R.layout.request_list, container, false);
+			return root;
+			
+		}
+	}
+	
+	public static void sendRequest(View view) {
 		AsyncHttpClient client = new AsyncHttpClient();
     	RequestParams params = new RequestParams();
-    	params.put("userID", message);
-    	EditText text = (EditText)findViewById(R.id.sendFriendRequest);
+    	params.put("userID", MainActivity.userID);
+    	EditText text = (EditText)view.findViewById(R.id.sendFriendRequest);
+    	System.out.println(text);
     	params.put("requestedUsername", text.getText().toString());
     	client.post("http://ecco.herokuapp.com/api/sendFriendRequest", params, new AsyncHttpResponseHandler() {
 			@Override
@@ -152,8 +197,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					Throwable arg3) {
 				String s = new String(response);
 				try {
-					json = new JSONObject(s);
-					Toast.makeText(getApplicationContext(), (CharSequence) json.get("error"), Toast.LENGTH_SHORT).show();
+					JSONObject json = new JSONObject(s);
+					Toast.makeText(HomeActivity.c, (CharSequence) json.get("error"), Toast.LENGTH_SHORT).show();
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -162,7 +207,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
 			@Override
 			public void onSuccess(int statuscode, Header[] headers, byte[] response) {
-				Toast.makeText(getApplicationContext(), "Request sent successfully!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(HomeActivity.c, "Request sent successfully!", Toast.LENGTH_SHORT).show();
 			}
 
     	});

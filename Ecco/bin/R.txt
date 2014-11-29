@@ -341,9 +341,10 @@ int layout abc_simple_decor 0x7f030017
 int layout activity_create_user 0x7f030018
 int layout activity_home 0x7f030019
 int layout activity_main 0x7f03001a
-int layout request_list 0x7f03001b
-int layout support_simple_spinner_dropdown_item 0x7f03001c
-int layout user_profile 0x7f03001d
+int layout friend_list 0x7f03001b
+int layout request_list 0x7f03001c
+int layout support_simple_spinner_dropdown_item 0x7f03001d
+int layout user_profile 0x7f03001e
 int menu create_user 0x7f0c0000
 int menu friends 0x7f0c0001
 int menu global 0x7f0c0002

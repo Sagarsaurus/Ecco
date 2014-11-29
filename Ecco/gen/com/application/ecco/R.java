@@ -1212,9 +1212,10 @@ containing a value of this type.
         public static final int activity_create_user=0x7f030018;
         public static final int activity_home=0x7f030019;
         public static final int activity_main=0x7f03001a;
-        public static final int request_list=0x7f03001b;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
-        public static final int user_profile=0x7f03001d;
+        public static final int friend_list=0x7f03001b;
+        public static final int request_list=0x7f03001c;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001d;
+        public static final int user_profile=0x7f03001e;
     }
     public static final class menu {
         public static final int create_user=0x7f0c0000;

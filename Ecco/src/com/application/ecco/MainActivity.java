@@ -23,6 +23,7 @@ public class MainActivity extends ActionBarActivity {
 	EditText username;
 	EditText password;
 	Button login;
+	static String userID = "";
 	final static String EXTRA_MESSAGE = "com.application.ecco.MESSAGE";
 	private boolean toSwitch=false;
 	private String toSend="";
@@ -89,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
 	    	JSONObject json;
 			try {
 				json = new JSONObject(toSend);
-		    	intent.putExtra(EXTRA_MESSAGE, json.get("_id").toString());
+		    	this.userID=json.get("_id").toString();
 		    	startActivity(intent);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
