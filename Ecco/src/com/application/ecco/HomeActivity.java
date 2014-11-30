@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.google.android.gms.maps.MapView;
 import com.loopj.android.http.*;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -33,6 +34,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -45,6 +47,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -59,7 +62,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	PagerAdapter adapter;
 	ViewPager pager;
 	
-	String[] title = { "Send Friend Request", "Pending Requests", "Friends", "News Feed", "Share Location" };
+	String[] title = { "Send Friend Request", "Pending Requests", "Friends" };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -158,23 +161,20 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 		
 	}
 	
-	public static class RequestListFragment extends Fragment {
+	public static class RequestListFragment extends ListFragment {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View root = inflater.inflate
 					(R.layout.request_list, container, false);
-			ListView view = (ListView)root.findViewById(R.id.requestList);
-			
-			//ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, friendArray);
-			//view.set
-			
+						
 			AsyncClient client = new AsyncClient();
 			try {
-				JSONArray array = client.execute(MainActivity.userID).get();
+				//JSONArray tryOne = client.execute(MainActivity.userID).get();
+				JSONArray tryTwo = client.execute(MainActivity.userID).get();
 				ArrayList<String> arraylist = new ArrayList<String>();
-				for(int i = 0; i < array.length(); i++) {
-					JSONObject object = array.getJSONObject(i);
+				for(int i = 0; i < tryTwo.length(); i++) {
+					JSONObject object = tryTwo.getJSONObject(i);
 					if(object.getString("friendShipStatus").equals("0")) {
 						arraylist.add(object.getString("username"));
 					}
@@ -182,6 +182,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				
 				String[] names = (String[]) arraylist.toArray();
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.request_list, names);
+				setListAdapter(adapter);
 				//root.setListAdapter(adapter);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -207,11 +208,23 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					(R.layout.friend_list, container, false);
 			AsyncClient client = new AsyncClient();
 			try {
-				JSONArray array = client.execute(MainActivity.userID).get();
+				//JSONArray tryOne = client.execute(MainActivity.userID).get();
+				JSONArray tryTwo = client.execute(MainActivity.userID).get();
+				ArrayList<String> arraylist = new ArrayList<String>();
+				for(int i = 0; i < tryTwo.length(); i++) {
+					JSONObject object = tryTwo.getJSONObject(i);
+					if(object.getString("friendShipStatus").equals("1")) {
+						arraylist.add(object.getString("username"));
+					}
+				}
+
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -232,13 +245,25 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	
 	
 	public static class ShareLocationFragment extends Fragment {
+		private MapView map = null;
+		//private MyLocationOverlay me = null;
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View root = inflater.inflate
-					(R.layout.request_list, container, false);
-			return root;
+			//View root = inflater.inflate
+					//(R.layout.request_list, container, false);
 			
+			return (new FrameLayout(getActivity()));
+			
+		}
+		
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+		    super.onActivityCreated(savedInstanceState);
+		    map=new MapView(getActivity());
+		    map.setClickable(true);
+		    ((ViewGroup)getView()).addView(map);
+
 		}
 	}
 	

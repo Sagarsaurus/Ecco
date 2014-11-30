@@ -24,5 +24,6 @@
     <string name="emailhint">user@email.com</string>
     <string name="phonehint">123-456-7890</string>
     <string name="title_activity_friends">FriendsActivity</string>
+    <string name="title_activity_map">Map</string>
 
 </resources>

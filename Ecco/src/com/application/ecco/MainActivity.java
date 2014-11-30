@@ -1,11 +1,28 @@
 package com.application.ecco;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -56,8 +73,21 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     
-    public void login(View view) {
-    	AsyncHttpClient client = new AsyncHttpClient();
+    public void login(View view) throws InterruptedException, ExecutionException, JSONException {
+    	AsyncClient client = new AsyncClient();
+    	String response = client.execute(username.getText().toString(), password.getText().toString()).get();
+    	JSONObject json = new JSONObject(response);
+    	System.out.println(response);
+    	if(!response.contains("error")) {
+	    	Intent intent = new Intent(this, HomeActivity.class);
+	    	this.userID=json.get("_id").toString();
+	    	startActivity(intent);
+    	}
+    	
+    	else {
+    		Toast.makeText(getApplicationContext(), json.get("error").toString(), Toast.LENGTH_SHORT).show();
+    	}
+    	/*AsyncHttpClient client = new AsyncHttpClient();
     	RequestParams params = new RequestParams();
     	params.put("username", username.getText().toString());
     	params.put("password", password.getText().toString());
@@ -96,11 +126,46 @@ public class MainActivity extends ActionBarActivity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    	}
+    	}*/
     }
     
     public void createUser(View view) {
     	Intent intent = new Intent(this, CreateUserActivity.class);
+    	startActivity(intent);
+    }
+    
+    private static class AsyncClient extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> list = new ArrayList<NameValuePair>();
+			list.add(new BasicNameValuePair("username", params[0]));
+			list.add(new BasicNameValuePair("password", params[1]));
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://ecco.herokuapp.com/api/login");
+			try {
+				post.setEntity(new UrlEncodedFormEntity(list));
+				HttpResponse response = httpclient.execute(post);
+				String json = EntityUtils.toString(response.getEntity());
+				return json;
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+	}
+    
+    public void openMap(View view) {
+    	Intent intent = new Intent(this, Map.class);
     	startActivity(intent);
     }
 }
