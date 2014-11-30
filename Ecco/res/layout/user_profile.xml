@@ -17,7 +17,6 @@
         android:layout_marginTop="127dp"
         android:ems="10" >
 
-        <requestFocus />
     </EditText>
 
     <Button

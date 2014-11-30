@@ -1,7 +1,23 @@
 package com.application.ecco;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 import com.loopj.android.http.*;
 import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.loopj.android.http.AsyncHttpClient;
@@ -19,6 +35,7 @@ import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,7 +43,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 @SuppressLint("NewApi")
@@ -145,10 +164,40 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				Bundle savedInstanceState) {
 			View root = inflater.inflate
 					(R.layout.request_list, container, false);
+			ListView view = (ListView)root.findViewById(R.id.requestList);
+			
+			//ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, friendArray);
+			//view.set
+			
+			AsyncClient client = new AsyncClient();
+			try {
+				JSONArray array = client.execute(MainActivity.userID).get();
+				ArrayList<String> arraylist = new ArrayList<String>();
+				for(int i = 0; i < array.length(); i++) {
+					JSONObject object = array.getJSONObject(i);
+					if(object.getString("friendShipStatus").equals("0")) {
+						arraylist.add(object.getString("username"));
+					}
+				}
+				
+				String[] names = (String[]) arraylist.toArray();
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.request_list, names);
+				//root.setListAdapter(adapter);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return root;
 			
 		}
 	}
+	
 	
 	public static class FriendFragment extends Fragment {
 		@Override
@@ -156,8 +205,17 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				Bundle savedInstanceState) {
 			View root = inflater.inflate
 					(R.layout.friend_list, container, false);
+			AsyncClient client = new AsyncClient();
+			try {
+				JSONArray array = client.execute(MainActivity.userID).get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return root;
-			
 		}
 	}
 	
@@ -225,6 +283,42 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	}
+	
+	private static class AsyncClient extends AsyncTask<String, String, JSONArray> {
+
+		@Override
+		protected JSONArray doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> list = new ArrayList<NameValuePair>();
+			list.add(new BasicNameValuePair("userID", params[0]));
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://ecco.herokuapp.com/api/getFriends");
+			try {
+				post.setEntity(new UrlEncodedFormEntity(list));
+				HttpResponse response = httpclient.execute(post);
+				String json = EntityUtils.toString(response.getEntity());
+				JSONArray array = new JSONArray(json);
+				for(int i = 0; i < array.length(); i++) {
+					System.out.println(array.getString(i));
+				}
+				return array;
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
 	}
 
 }
