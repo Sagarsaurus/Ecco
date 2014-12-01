@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 @SuppressLint("NewApi")
@@ -61,7 +62,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	PagerAdapter adapter;
 	ViewPager pager;
 	
-	String[] title = { "Send Friend Request", "Pending Requests", "Friends" };
+	String[] title = { "News Feed", "Send Friend Request", "Pending Requests", "Friends" };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,22 +121,22 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 		public Fragment getItem(int index) {
 			switch (index) {
 			case 0:
-				return new ProfileFragment();
-			case 1:
-				return new RequestListFragment();
-			case 2:
-				return new FriendFragment();
-			case 3: 
 				return new NewsFeedFragment();
-			case 4: 
-				return new ShareLocationFragment();
+			case 1:
+				return new ProfileFragment();
+			case 2:
+				return new RequestListFragment();
+			case 3: 
+				return new FriendFragment();
+			//case 4: 
+			//	return new ShareLocationFragment();
 			}
 			return null;
 		}
 
 		@Override
 		public int getCount() {
-			return 5;
+			return 4;
 		}
 		
 	}
@@ -166,7 +167,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				Bundle savedInstanceState) {
 			View root = inflater.inflate
 					(R.layout.request_list, container, false);
-						
 			AsyncClient client = new AsyncClient();
 			try {
 				//JSONArray tryOne = client.execute(MainActivity.userID).get();
@@ -174,13 +174,19 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				ArrayList<String> arraylist = new ArrayList<String>();
 				for(int i = 0; i < tryTwo.length(); i++) {
 					JSONObject object = tryTwo.getJSONObject(i);
-					if(object.getString("friendShipStatus").equals("0")) {
-						arraylist.add(object.getString("username"));
+					if(object.getString("friendshipStatus").equals("0")) {
+						if(!object.getString("username").equals(MainActivity.userName)) {
+							arraylist.add(object.getString("username"));
+						}
 					}
 				}
 				
-				String[] names = (String[]) arraylist.toArray();
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.request_list, names);
+				Object[] names = arraylist.toArray();
+				String[] arr = new String[names.length];
+				for(int i = 0; i < arr.length; i++) {
+					arr[i] = (String) names[i];
+				}
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.request_list, android.R.id.empty, arr);
 				setListAdapter(adapter);
 				//root.setListAdapter(adapter);
 			} catch (InterruptedException e) {
@@ -194,12 +200,11 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				e.printStackTrace();
 			}
 			return root;
-			
 		}
 	}
 	
 	
-	public static class FriendFragment extends Fragment {
+	public static class FriendFragment extends ListFragment {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -212,10 +217,20 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				ArrayList<String> arraylist = new ArrayList<String>();
 				for(int i = 0; i < tryTwo.length(); i++) {
 					JSONObject object = tryTwo.getJSONObject(i);
-					if(object.getString("friendShipStatus").equals("1")) {
-						arraylist.add(object.getString("username"));
+					if(object.getString("friendshipStatus").equals("1")) {
+						if(!object.getString("username").equals(MainActivity.userName)) {
+							arraylist.add(object.getString("username"));
+						}
 					}
 				}
+				
+				Object[] names = arraylist.toArray();
+				String[] arr = new String[names.length];
+				for(int i = 0; i < arr.length; i++) {
+					arr[i] = (String) names[i];
+				}
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.friend_list, android.R.id.empty, arr);
+				setListAdapter(adapter);
 
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

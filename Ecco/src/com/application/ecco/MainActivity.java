@@ -43,6 +43,7 @@ public class MainActivity extends ActionBarActivity {
 	EditText password;
 	Button login;
 	static String userID = "";
+	static String userName = "";
 	final static String EXTRA_MESSAGE = "com.application.ecco.MESSAGE";
 	private boolean toSwitch=false;
 	private String toSend="";
@@ -107,6 +108,7 @@ public class MainActivity extends ActionBarActivity {
     	if(!response.contains("error")) {
 	    	Intent intent = new Intent(this, HomeActivity.class);
 	    	this.userID=json.get("_id").toString();
+	    	this.userName = username.getText().toString();
 	    	startActivity(intent);
     	}
     	

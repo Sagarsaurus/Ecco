@@ -1483,7 +1483,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f080028;
         public static final int action_menu_presenter=0x7f080029;
         public static final int action_mode_close_button=0x7f080036;
-        public static final int action_settings=0x7f080064;
+        public static final int action_settings=0x7f080063;
         public static final int activity_chooser_view_content=0x7f080037;
         public static final int always=0x7f08001e;
         public static final int beginning=0x7f080023;
@@ -1502,7 +1502,6 @@ containing a value of this type.
         public static final int dialog=0x7f080021;
         public static final int disableHome=0x7f08001b;
         public static final int dropdown=0x7f080022;
-        public static final int dummyList=0x7f080062;
         public static final int editText1=0x7f08005c;
         public static final int editText2=0x7f08005a;
         public static final int edit_query=0x7f080042;
@@ -1550,7 +1549,7 @@ containing a value of this type.
         public static final int search_src_text=0x7f080049;
         public static final int search_voice_btn=0x7f08004d;
         public static final int selectionDetails=0x7f08000b;
-        public static final int sendFriendRequest=0x7f080063;
+        public static final int sendFriendRequest=0x7f080062;
         public static final int shareMap=0x7f08005e;
         public static final int shortcut=0x7f080040;
         public static final int showCustom=0x7f08001a;
