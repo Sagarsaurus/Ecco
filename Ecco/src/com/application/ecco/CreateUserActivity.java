@@ -56,7 +56,7 @@ public class CreateUserActivity extends ActionBarActivity {
 		AsyncHttpClient client = new AsyncHttpClient();
     	RequestParams params = new RequestParams();
     	params.put("username", username.getText().toString());
-    	params.put("password", password.getText().toString());
+    	params.put("password", MainActivity.md5(password.getText().toString()));
     	params.put("email", email.getText().toString());
     	params.put("phone", phone.getText().toString());
     	
