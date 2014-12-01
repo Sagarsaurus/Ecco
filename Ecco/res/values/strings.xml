@@ -25,5 +25,8 @@
     <string name="phonehint">123-456-7890</string>
     <string name="title_activity_friends">FriendsActivity</string>
     <string name="title_activity_map">Map</string>
+    <string name="title_activity_share_location">ShareLocationActivity</string>
+    <string name="Building">Building</string>
+    <string name="Floor">Floor</string>
 
 </resources>

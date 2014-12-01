@@ -168,4 +168,9 @@ public class MainActivity extends ActionBarActivity {
     	Intent intent = new Intent(this, Map.class);
     	startActivity(intent);
     }
+    
+    public void openSharingMap(View view) {
+    	Intent intent = new Intent(this, ShareLocationActivity.class);
+    	startActivity(intent);
+    }
 }
