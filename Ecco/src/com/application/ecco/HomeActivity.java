@@ -36,7 +36,6 @@ import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,7 +47,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 @SuppressLint("NewApi")
@@ -58,6 +56,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	JSONObject json;
 	ActionBar bar = null;
 	private static Context c = null;
+	static String shareToUserID="";
 	
 	PagerAdapter adapter;
 	ViewPager pager;
