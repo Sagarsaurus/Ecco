@@ -67,6 +67,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	static JSONArray locations;
 	static String[] shares;
 	static String friendshipUserID="";
+	static int floor = 0;
+	public static boolean placeOverlay = false;;
 	
 	PagerAdapter adapter;
 	ViewPager pager;
@@ -208,7 +210,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				ArrayList<String> arraylist = new ArrayList<String>();
 				for(int i = 0; i < tryTwo.length(); i++) {
 					JSONObject object = tryTwo.getJSONObject(i);
-					if(object.getString("friendshipStatus").equals("0")) {
+					if(object.getString("friendshipStatus").equals("0") && !object.getString("userID").equals(MainActivity.userID)) {
 						if(!object.getString("username").equals(MainActivity.userName)) {
 							arraylist.add(object.getString("username"));
 						}
@@ -244,13 +246,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					JSONObject json = tryTwo.getJSONObject(i);
 					if(json.get("username").equals(username)) {
 						if(json.get("userID").equals(MainActivity.userID)) {
-							HomeActivity.otherUserID = (String) json.get("requstedUserID");
+							HomeActivity.otherUserID = (String) json.get("requestedID");
 						}
 						else {
 							HomeActivity.otherUserID = (String) json.get("userID");
 						}
-							Intent decisionIntent = new Intent(getActivity(), DecisionActivity.class);
-					    	getActivity().startActivity(decisionIntent);
+						requests=null;
+						Intent decisionIntent = new Intent(getActivity(), DecisionActivity.class);
+				    	getActivity().startActivity(decisionIntent);
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -308,7 +311,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					JSONObject json = tryTwo.getJSONObject(i);
 					if(json.get("username").equals(username)) {
 						if(json.get("userID").equals(MainActivity.userID)) {
-							shareToUserID = (String) json.get("requestedUserID");
+							shareToUserID = (String) json.get("requestedID");
 							friendshipUserID = MainActivity.userID;
 						}
 						
@@ -316,6 +319,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 							shareToUserID = (String) json.get("userID");
 							friendshipUserID = MainActivity.userID;
 						}
+						friends=null;
 						Intent shareIntent = new Intent(getActivity(), ShareLocationActivity.class);
 					    getActivity().startActivity(shareIntent);
 					}
@@ -376,6 +380,15 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				JSONObject json = locations.getJSONObject(position);
 				HomeActivity.lat = Double.parseDouble((String) json.get("lat"));
 				HomeActivity.lng = Double.parseDouble((String) json.get("lng"));
+				String floor = json.getString("floor");
+				if(floor.equals("1") || floor.equals("2") || floor.equals("3")) {
+					HomeActivity.floor = Integer.parseInt(floor);
+					HomeActivity.placeOverlay=true;
+				}
+				
+				else {
+					HomeActivity.placeOverlay=false;
+				}
 				Intent i = new Intent(getActivity(), Map.class);
 				startActivity(i);
 				
