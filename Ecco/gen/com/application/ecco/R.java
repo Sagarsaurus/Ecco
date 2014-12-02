@@ -16,6 +16,10 @@ public final class R {
         public static final int abc_slide_out_bottom=0x7f040004;
         public static final int abc_slide_out_top=0x7f040005;
     }
+    public static final class array {
+        public static final int buildings=0x7f0c0001;
+        public static final int klaus_floor_array=0x7f0c0000;
+    }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -1464,8 +1468,9 @@ containing a value of this type.
         public static final int klaus1=0x7f020078;
         public static final int klaus2=0x7f020079;
         public static final int klaus3=0x7f02007a;
-        public static final int powered_by_google_dark=0x7f02007b;
-        public static final int powered_by_google_light=0x7f02007c;
+        public static final int logo=0x7f02007b;
+        public static final int powered_by_google_dark=0x7f02007c;
+        public static final int powered_by_google_light=0x7f02007d;
     }
     public static final class id {
         public static final int Button01=0x7f080057;
@@ -1628,18 +1633,19 @@ containing a value of this type.
         public static final int activity_map=0x7f03001c;
         public static final int activity_share_location=0x7f03001d;
         public static final int friend_list=0x7f03001e;
-        public static final int request_list=0x7f03001f;
-        public static final int support_simple_spinner_dropdown_item=0x7f030020;
-        public static final int user_profile=0x7f030021;
+        public static final int news_feed=0x7f03001f;
+        public static final int request_list=0x7f030020;
+        public static final int support_simple_spinner_dropdown_item=0x7f030021;
+        public static final int user_profile=0x7f030022;
     }
     public static final class menu {
-        public static final int create_user=0x7f0c0000;
-        public static final int decision=0x7f0c0001;
-        public static final int friends=0x7f0c0002;
-        public static final int global=0x7f0c0003;
-        public static final int home=0x7f0c0004;
-        public static final int main=0x7f0c0005;
-        public static final int share_location=0x7f0c0006;
+        public static final int create_user=0x7f0d0000;
+        public static final int decision=0x7f0d0001;
+        public static final int friends=0x7f0d0002;
+        public static final int global=0x7f0d0003;
+        public static final int home=0x7f0d0004;
+        public static final int main=0x7f0d0005;
+        public static final int share_location=0x7f0d0006;
     }
     public static final class string {
         public static final int Building=0x7f060049;

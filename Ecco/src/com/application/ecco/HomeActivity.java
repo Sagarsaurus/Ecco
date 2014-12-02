@@ -62,6 +62,10 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	static String[] requests;
 	static String[] friends;
 	static String otherUserID = "";
+	static double lat = 0;
+	static double lng = 0;
+	static JSONArray locations;
+	static String[] shares;
 	
 	PagerAdapter adapter;
 	ViewPager pager;
@@ -145,7 +149,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 		
 	}
 	
-	public static class ProfileFragment extends Fragment {
+	public static class ProfileFragment extends Fragment implements View.OnClickListener {
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -153,14 +157,37 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			final View root = inflater.inflate
 					(R.layout.user_profile, container, false);
 			root.findViewById(R.id.button1)
-				.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View root) {
-						// methods need to be static
-						 sendRequest(root);
-					}
-				});
+				.setOnClickListener(this);
 			return root;
+		}
+
+		@Override
+		public void onClick(View v) {
+			AsyncHttpClient client = new AsyncHttpClient();
+	    	RequestParams params = new RequestParams();
+	    	params.put("userID", MainActivity.userID);
+	    	EditText text = (EditText)v.findViewById(R.id.sendFriendRequest);
+	    	params.put("requestedUsername", text.getText().toString());
+	    	client.post("http://ecco.herokuapp.com/api/sendFriendRequest", params, new AsyncHttpResponseHandler() {
+				@Override
+				public void onFailure(int statuscode, Header[] headers, byte[] response,
+						Throwable arg3) {
+					String s = new String(response);
+					try {
+						JSONObject json = new JSONObject(s);
+						Toast.makeText(HomeActivity.c, (CharSequence) json.get("error"), Toast.LENGTH_SHORT).show();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void onSuccess(int statuscode, Header[] headers, byte[] response) {
+					Toast.makeText(HomeActivity.c, "Request sent successfully!", Toast.LENGTH_SHORT).show();
+				}
+	    	});
+			
 		}
 		
 	}
@@ -215,12 +242,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				try {
 					JSONObject json = tryTwo.getJSONObject(i);
 					if(json.get("username").equals(username)) {
-						if(!json.get("userID").equals(MainActivity.userID) && json.get("requestedID").equals(MainActivity.userID)) {
-							HomeActivity.otherUserID = (String) json.get("userID");
-							Intent decisionIntent = new Intent(getActivity(), DecisionActivity.class);
-							requests = null;
-					    	getActivity().startActivity(decisionIntent);
+						if(json.get("userID").equals(MainActivity.userID)) {
+							HomeActivity.otherUserID = (String) json.get("requstedUserID");
 						}
+						else {
+							HomeActivity.otherUserID = (String) json.get("userID");
+						}
+							Intent decisionIntent = new Intent(getActivity(), DecisionActivity.class);
+					    	getActivity().startActivity(decisionIntent);
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -246,9 +275,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				for(int i = 0; i < tryTwo.length(); i++) {
 					JSONObject object = tryTwo.getJSONObject(i);
 					if(object.getString("friendshipStatus").equals("1")) {
-						if(!object.getString("username").equals(MainActivity.userName)) {
-							arraylist.add(object.getString("username"));
-						}
+						arraylist.add(object.getString("username"));
 					}
 				}
 				
@@ -272,17 +299,87 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 			return root;
 		}
+		
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			String username = friends[position];
+			for(int i = 0; i < tryTwo.length(); i++) {
+				try {
+					JSONObject json = tryTwo.getJSONObject(i);
+					if(json.get("username").equals(username)) {
+						if(json.get("userID").equals(MainActivity.userID)) {
+							shareToUserID = (String) json.get("requestedUserID");
+						}
+						
+						else {
+							shareToUserID = (String) json.get("userID");
+						}
+						Intent shareIntent = new Intent(getActivity(), ShareLocationActivity.class);
+					    getActivity().startActivity(shareIntent);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
+		}
 
 	}
 	
-	public static class NewsFeedFragment extends Fragment {
+	public static class NewsFeedFragment extends ListFragment {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View root = inflater.inflate
-					(R.layout.request_list, container, false);
+					(R.layout.news_feed, container, false);
+			AsyncLocationClient client = new AsyncLocationClient();
+			try {
+				//JSONArray tryOne = client.execute(MainActivity.userID).get();
+				locations = client.execute(MainActivity.userID).get();
+				ArrayList<String> arraylist = new ArrayList<String>();
+				for(int i = 0; i < locations.length(); i++) {
+					JSONObject curr = locations.getJSONObject(i);
+					String user = curr.getString("senderUsername");
+					String building = curr.getString("building");
+					String floor = curr.getString("floor");
+					arraylist.add("User: "+user+" Building: "+building+" Floor: "+floor);
+				}
+				
+				Object[] names = arraylist.toArray();
+				shares = new String[names.length];
+				for(int i = 0; i < names.length; i++) {
+					shares[i] = (String) names[i];
+				}
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.news_feed, android.R.id.empty, shares);
+				setListAdapter(adapter);
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			return root;
 			
+		}
+		
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			try {
+				JSONObject json = locations.getJSONObject(position);
+				HomeActivity.lat = Double.parseDouble((String) json.get("lat"));
+				HomeActivity.lng = Double.parseDouble((String) json.get("lng"));
+				Intent i = new Intent(getActivity(), Map.class);
+				startActivity(i);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -315,7 +412,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     	RequestParams params = new RequestParams();
     	params.put("userID", MainActivity.userID);
     	EditText text = (EditText)view.findViewById(R.id.sendFriendRequest);
-    	System.out.println(text);
     	params.put("requestedUsername", text.getText().toString());
     	client.post("http://ecco.herokuapp.com/api/sendFriendRequest", params, new AsyncHttpResponseHandler() {
 			@Override
@@ -385,5 +481,39 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 		}
 		
 	}
+	
+	private static class AsyncLocationClient extends AsyncTask<String, String, JSONArray> {
+
+		@Override
+		protected JSONArray doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> list = new ArrayList<NameValuePair>();
+			list.add(new BasicNameValuePair("userID", params[0]));
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://ecco.herokuapp.com/api/listSharedLocations");
+			try {
+				post.setEntity(new UrlEncodedFormEntity(list));
+				HttpResponse response = httpclient.execute(post);
+				String json = EntityUtils.toString(response.getEntity());
+				JSONArray array = new JSONArray(json);
+				return array;
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+	}
+
 
 }
