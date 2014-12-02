@@ -59,16 +59,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	ActionBar bar = null;
 	private static Context c = null;
 	static String shareToUserID="";
-	static String[] requests;
-	static String[] friends;
 	static String otherUserID = "";
 	static double lat = 0;
 	static double lng = 0;
-	static JSONArray locations;
-	static String[] shares;
 	static String friendshipUserID="";
 	static int floor = 0;
-	public static boolean placeOverlay = false;;
+	public static boolean placeOverlay = false;
 	
 	PagerAdapter adapter;
 	ViewPager pager;
@@ -198,6 +194,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	
 	public static class RequestListFragment extends ListFragment {
 		JSONArray tryTwo;
+		String[] requests;
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -261,11 +258,29 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				}
 			}
 		}
+		
+		@Override
+		public void onPause() {
+			super.onPause();
+			AsyncClient client = new AsyncClient();
+			try {
+				client.execute(MainActivity.userID).get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+		}
 	}
 	
 	
 	public static class FriendFragment extends ListFragment {
 		JSONArray tryTwo;
+		String[] friends;
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -334,6 +349,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 	
 	public static class NewsFeedFragment extends ListFragment {
+		String[] shares;
+		JSONArray locations;
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {

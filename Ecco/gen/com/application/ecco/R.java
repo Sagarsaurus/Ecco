@@ -1474,7 +1474,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Button01=0x7f080057;
-        public static final int Share=0x7f080062;
+        public static final int Share=0x7f080061;
         public static final int TextView01=0x7f080054;
         public static final int TextView02=0x7f080056;
         public static final int TextView03=0x7f080055;
@@ -1489,15 +1489,14 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f080028;
         public static final int action_menu_presenter=0x7f080029;
         public static final int action_mode_close_button=0x7f080036;
-        public static final int action_settings=0x7f080064;
+        public static final int action_settings=0x7f080063;
         public static final int activity_chooser_view_content=0x7f080037;
         public static final int always=0x7f08001e;
         public static final int beginning=0x7f080023;
         public static final int book_now=0x7f080010;
-        public static final int buildings=0x7f080060;
+        public static final int buildings=0x7f08005f;
         public static final int button1=0x7f08004f;
         public static final int button2=0x7f08005c;
-        public static final int button3=0x7f08005e;
         public static final int buyButton=0x7f08000a;
         public static final int buy_now=0x7f08000f;
         public static final int buy_with_google=0x7f08000e;
@@ -1515,7 +1514,7 @@ containing a value of this type.
         public static final int end=0x7f080025;
         public static final int expand_activities_button=0x7f080038;
         public static final int expanded_menu=0x7f08003e;
-        public static final int floor=0x7f080061;
+        public static final int floor=0x7f080060;
         public static final int grayscale=0x7f080012;
         public static final int holo_dark=0x7f080005;
         public static final int holo_light=0x7f080006;
@@ -1555,8 +1554,8 @@ containing a value of this type.
         public static final int search_src_text=0x7f080049;
         public static final int search_voice_btn=0x7f08004d;
         public static final int selectionDetails=0x7f08000b;
-        public static final int sendFriendRequest=0x7f080063;
-        public static final int shareMap=0x7f08005f;
+        public static final int sendFriendRequest=0x7f080062;
+        public static final int shareMap=0x7f08005e;
         public static final int shortcut=0x7f080040;
         public static final int showCustom=0x7f08001a;
         public static final int showHome=0x7f080017;

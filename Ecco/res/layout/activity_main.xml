@@ -72,15 +72,5 @@
         android:ems="10"
         android:hint="@string/Username" />
 
-    <Button
-        android:id="@+id/button3"
-        android:onClick="openSharingMap"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button2"
-        android:layout_alignRight="@+id/button1"
-        android:layout_marginBottom="34dp"
-        android:text="Map" />
 
 </RelativeLayout>
