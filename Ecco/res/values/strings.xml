@@ -28,5 +28,6 @@
     <string name="title_activity_share_location">ShareLocationActivity</string>
     <string name="Building">Building</string>
     <string name="Floor">Floor</string>
+    <string name="title_activity_decision">DecisionActivity</string>
 
 </resources>

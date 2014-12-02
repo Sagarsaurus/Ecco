@@ -36,6 +36,7 @@ import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,6 +59,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	ActionBar bar = null;
 	private static Context c = null;
 	static String shareToUserID="";
+	static String[] requests;
+	static String[] friends;
+	static String otherUserID = "";
 	
 	PagerAdapter adapter;
 	ViewPager pager;
@@ -162,6 +166,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 	
 	public static class RequestListFragment extends ListFragment {
+		JSONArray tryTwo;
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -170,7 +176,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			AsyncClient client = new AsyncClient();
 			try {
 				//JSONArray tryOne = client.execute(MainActivity.userID).get();
-				JSONArray tryTwo = client.execute(MainActivity.userID).get();
+				tryTwo = client.execute(MainActivity.userID).get();
 				ArrayList<String> arraylist = new ArrayList<String>();
 				for(int i = 0; i < tryTwo.length(); i++) {
 					JSONObject object = tryTwo.getJSONObject(i);
@@ -182,11 +188,11 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				}
 				
 				Object[] names = arraylist.toArray();
-				String[] arr = new String[names.length];
-				for(int i = 0; i < arr.length; i++) {
-					arr[i] = (String) names[i];
+				requests = new String[names.length];
+				for(int i = 0; i < requests.length; i++) {
+					requests[i] = (String) names[i];
 				}
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.request_list, android.R.id.empty, arr);
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.request_list, android.R.id.empty, requests);
 				setListAdapter(adapter);
 				//root.setListAdapter(adapter);
 			} catch (InterruptedException e) {
@@ -201,10 +207,32 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 			return root;
 		}
+		
+		
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			String username = requests[position];
+			for(int i = 0; i < tryTwo.length(); i++) {
+				try {
+					JSONObject json = tryTwo.getJSONObject(i);
+					if(json.get("username").equals(username)) {
+						if(!json.get("userID").equals(MainActivity.userID) && json.get("requestedID").equals(MainActivity.userID)) {
+							HomeActivity.otherUserID = (String) json.get("userID");
+							Intent decisionIntent = new Intent(getActivity(), DecisionActivity.class);
+							requests = null;
+					    	getActivity().startActivity(decisionIntent);
+						}
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	
 	public static class FriendFragment extends ListFragment {
+		JSONArray tryTwo;
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -213,7 +241,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			AsyncClient client = new AsyncClient();
 			try {
 				//JSONArray tryOne = client.execute(MainActivity.userID).get();
-				JSONArray tryTwo = client.execute(MainActivity.userID).get();
+				tryTwo = client.execute(MainActivity.userID).get();
 				ArrayList<String> arraylist = new ArrayList<String>();
 				for(int i = 0; i < tryTwo.length(); i++) {
 					JSONObject object = tryTwo.getJSONObject(i);
@@ -225,11 +253,11 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				}
 				
 				Object[] names = arraylist.toArray();
-				String[] arr = new String[names.length];
-				for(int i = 0; i < arr.length; i++) {
-					arr[i] = (String) names[i];
+				friends = new String[names.length];
+				for(int i = 0; i < friends.length; i++) {
+					friends[i] = (String) names[i];
 				}
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.friend_list, android.R.id.empty, arr);
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.friend_list, android.R.id.empty, friends);
 				setListAdapter(adapter);
 
 			} catch (InterruptedException e) {
@@ -244,6 +272,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 			return root;
 		}
+
 	}
 	
 	public static class NewsFeedFragment extends Fragment {
@@ -338,9 +367,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 				HttpResponse response = httpclient.execute(post);
 				String json = EntityUtils.toString(response.getEntity());
 				JSONArray array = new JSONArray(json);
-				for(int i = 0; i < array.length(); i++) {
-					System.out.println(array.getString(i));
-				}
 				return array;
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block

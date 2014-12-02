@@ -56,6 +56,10 @@
             android:name=".ShareLocationActivity"
             android:label="@string/title_activity_share_location" >
         </activity>
+        <activity
+            android:name=".DecisionActivity"
+            android:label="@string/title_activity_decision" >
+        </activity>
     </application>
 
 </manifest>
