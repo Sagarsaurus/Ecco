@@ -66,6 +66,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	static double lng = 0;
 	static JSONArray locations;
 	static String[] shares;
+	static String friendshipUserID="";
 	
 	PagerAdapter adapter;
 	ViewPager pager;
@@ -150,7 +151,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 	
 	public static class ProfileFragment extends Fragment implements View.OnClickListener {
-		
+		View root;
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -158,6 +159,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					(R.layout.user_profile, container, false);
 			root.findViewById(R.id.button1)
 				.setOnClickListener(this);
+			this.root = root;
 			return root;
 		}
 
@@ -166,7 +168,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 			AsyncHttpClient client = new AsyncHttpClient();
 	    	RequestParams params = new RequestParams();
 	    	params.put("userID", MainActivity.userID);
-	    	EditText text = (EditText)v.findViewById(R.id.sendFriendRequest);
+	    	EditText text = (EditText)root.findViewById(R.id.sendFriendRequest);
 	    	params.put("requestedUsername", text.getText().toString());
 	    	client.post("http://ecco.herokuapp.com/api/sendFriendRequest", params, new AsyncHttpResponseHandler() {
 				@Override
@@ -202,7 +204,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					(R.layout.request_list, container, false);
 			AsyncClient client = new AsyncClient();
 			try {
-				//JSONArray tryOne = client.execute(MainActivity.userID).get();
 				tryTwo = client.execute(MainActivity.userID).get();
 				ArrayList<String> arraylist = new ArrayList<String>();
 				for(int i = 0; i < tryTwo.length(); i++) {
@@ -308,10 +309,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 					if(json.get("username").equals(username)) {
 						if(json.get("userID").equals(MainActivity.userID)) {
 							shareToUserID = (String) json.get("requestedUserID");
+							friendshipUserID = MainActivity.userID;
 						}
 						
 						else {
 							shareToUserID = (String) json.get("userID");
+							friendshipUserID = MainActivity.userID;
 						}
 						Intent shareIntent = new Intent(getActivity(), ShareLocationActivity.class);
 					    getActivity().startActivity(shareIntent);
